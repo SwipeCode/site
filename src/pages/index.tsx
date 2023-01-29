@@ -4,6 +4,62 @@ import Link from "next/link";
 
 import { api } from "../utils/api";
 
+import { Canvas } from "@react-three/fiber";
+import { useFrame } from '@react-three/fiber'
+import { useState } from "react";
+
+const Scene = () => {
+  return (
+    <Canvas>
+      <ambientLight />
+      <pointLight position={[10, 10, 10]} />
+
+    <MyAnimatedBox />
+      
+    </Canvas>
+  );
+};
+
+function MyAnimatedBox() {
+
+  const [position, setPosition] = useState([0, 0, 0])
+  const [rotation, setRotation] = useState([0, 0, 0])
+  const [scale, setScale] = useState(0)
+  const [color, setColor] = useState("")
+
+  useFrame(({clock}) => {
+    const a = clock.getElapsedTime()
+    
+    setPosition([Math.tan(a), 0, Math.tan(a)])
+    setRotation([a, a, a])
+
+    //  [Math.floor(Math.random() * 255),Math.floor(Math.random() * 255),Math.floor(Math.random() * 255)]
+    // set an rgb value based on the time
+
+    // gradient the color based on the time
+    const r = Math.floor(Math.sin(a) * 127 + 128)
+    const g = Math.floor(Math.sin(a + 2) * 127 + 128)
+    const b = Math.floor(Math.sin(a + 4) * 127 + 128)
+
+
+    // convert the rgb values to a hex value
+    const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+
+    // set the color
+    setColor(hex)
+    
+  })
+
+
+  return (
+    <mesh rotation={rotation} position={position} scale={[2,1,1]}>
+      <boxGeometry />
+      <meshBasicMaterial color={color} />
+    </mesh>
+  )
+}
+
+
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
@@ -15,9 +71,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <Scene />
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+            Swipecode <span className="text-[hsl(280,100%,70%)]">Enterprises</span>
           </h1>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
             <Link
